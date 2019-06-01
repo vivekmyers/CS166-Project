@@ -1,9 +1,10 @@
 import PriorityQueue
+import System.Random
+import Control.Monad
+import Data.Tree
+
 
 main = do
-    let pq1 = foldr (add <*> id) (new :: PriorityQueue Int Int) [1..10]
-    let pq2 = foldr (add <*> id) (new :: PriorityQueue Int Int) [(-1)..4]
-    putStr "First Element: "
-    print . fst.poll . (merge pq2) . snd.poll . decrease 3 3 0 $ pq1
-    putStr "Queue: "
-    print . snd.poll . (merge pq2) . snd.poll . decrease 3 3 0 $ pq1
+    let pq1 = addAll [(2*i, -2*i) | i <- [1..10]] new
+        pq2 = addAll [(2*i+1, -2*i-1) | i <- [1..10]] new
+    print $ toList $ merge pq1 pq2
