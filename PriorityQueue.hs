@@ -18,7 +18,12 @@ isEmpty _ = False
 add :: (Eq e, Ord a) => e -> a -> PriorityQueue e a -> PriorityQueue e a
 add x p pq = pq {added = insert' x p $ added pq}
 
--- |Return the minimum element and the remaining queue after polling in O(log n) amortized time
+{-
+    |Return the minimum element and the remaining queue after 
+polling in O(log n) amortized time. The operation is O(1) non-amortized time if 
+only the first element is used, as the removal of the element will not be evaluated
+(it becomes equivalent to find-min).
+-}
 poll :: (Eq e, Ord a) => PriorityQueue e a -> (e, PriorityQueue e a)
 poll PQ {added = Empty} = empty
 poll pq = (first, cleanup . PQ rest $ deleted pq)
