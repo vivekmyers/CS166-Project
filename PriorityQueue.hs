@@ -2,6 +2,7 @@ module PriorityQueue (
     PriorityQueue, new, add, poll, merge, decrease, addAll, toList, isEmpty
     ) where
 
+-- |Contains bootstrapped queue of added elements and bootstrapped queue of deleted ones
 data PriorityQueue e a = PQ {added :: BPQ e a, deleted :: BPQ e a} deriving Show
 
 -- |Constructs an empty priority queue with elements e and ordering a in O(1) time
