@@ -52,7 +52,7 @@ run n = do
     let max = floor . exp $ n * log 10 :: Integer
     nums <- take (fromIntegral max) <$> (randomRs (1, 1000 * max) <$> getStdGen) :: IO [Integer]
     let benchn x = bench $ x ++ "-" ++ show max
-    defaultMain [ 
+    return [ 
             bgroup "binomial" [ 
                 benchn "heapsort" $ whnf binHeapsort nums,
                 benchn "meld" $ whnf binMeld nums,
@@ -66,4 +66,5 @@ run n = do
         ]
 
 main = do
-    mapM_ run [4, 5, 6, 7]
+    result <- mapM run [4]
+    defaultMain $ concat result

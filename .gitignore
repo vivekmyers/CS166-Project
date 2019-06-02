@@ -4,3 +4,4 @@
 *.dyn*
 bench
 main
+result*.html
