@@ -6,9 +6,12 @@ import PriorityQueue
 import qualified Binomial as B
 import System.Random
 import Criterion.Main
+import qualified Data.Heap as H
+import System.Environment
 
 skewHeapsort xs = toList $ addAll (zip xs xs) new
 binHeapsort xs = B.toList $ B.addAll (zip xs xs) B.new
+leftHeapsort xs = H.toList $ (foldr H.insert H.empty xs :: H.MinHeap Integer)
 
 skewMeld nums = toList . foldr f new $ 
                     do num <- chunk (2 * n) nums 
@@ -22,6 +25,12 @@ binMeld nums = B.toList . foldr f B.new $
                        return queue
     where n = floor $ fromIntegral (length nums) / 100
           f pq1 pq2 = iterate (snd.B.poll) (B.merge pq1 pq2) !! n
+leftMeld nums = H.toList . foldr f H.empty $ 
+                    do num <- chunk (2 * n) nums 
+                       let queue = foldr H.insert H.empty num :: H.MinHeap Integer
+                       return queue
+    where n = floor $ fromIntegral (length nums) / 100
+          f pq1 pq2 = H.drop n (H.union pq1 pq2)
 
 skewDijkstra :: [Integer] -> Int -> [Integer] 
 skewDijkstra nums deg = toList . fst $ foldr f (addAll [(x, m) | x <- nums] new, 
@@ -51,7 +60,7 @@ chunk n xs = take n xs : chunk n (drop n xs)
 run n = do
     let max = floor . exp $ n * log 10 :: Integer
     nums <- take (fromIntegral max) <$> (randomRs (1, 1000 * max) <$> getStdGen) :: IO [Integer]
-    let benchn x = bench $ x ++ "-" ++ show max
+    let benchn x = bench $ x ++ "-1e" ++ show (floor n)
     return [ 
             bgroup "binomial" [ 
                 benchn "heapsort" $ whnf binHeapsort nums,
@@ -62,9 +71,13 @@ run n = do
                 benchn "heapsort" $ whnf skewHeapsort nums,
                 benchn "meld" $ whnf skewMeld nums,
                 benchn "dijkstra" $ whnf (skewDijkstra nums) 4
+                ],
+            bgroup "left" [ 
+                benchn "heapsort" $ whnf leftHeapsort nums,
+                benchn "meld" $ whnf leftMeld nums
                 ]
         ]
 
 main = do
-    result <- mapM run [4]
+    result <- mapM run [5]
     defaultMain $ concat result
