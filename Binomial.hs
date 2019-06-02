@@ -20,9 +20,7 @@ add x p pq = pq {added = insert x p $ added pq}
 
 {-
     |Return the minimum element and the remaining queue after 
-polling in O(log n) amortized time. The operation is O(1) non-amortized time if 
-only the first element is used, as the removal of the element will not be evaluated
-(it becomes equivalent to find-min).
+polling in O(log n) amortized time
 -}
 poll :: (Eq e, Ord a) => PriorityQueue e a -> (e, PriorityQueue e a)
 poll PQ {added = []} = empty
@@ -30,7 +28,7 @@ poll pq = (first, cleanup . PQ rest $ deleted pq)
     where first = fst . findMin . added $ pq
           rest = deleteMin . added $ pq
 
--- |Meld two priority queues in O(1)
+-- |Meld two priority queues in O(log n) time
 merge :: (Eq e, Ord a) => PriorityQueue e a -> PriorityQueue e a -> PriorityQueue e a
 merge a b = PQ (meld (added a) (added b)) (meld (deleted a) (deleted b))
 
@@ -44,7 +42,7 @@ decrease x p q pq
 addAll :: (Eq e, Ord a) => [(e, a)] -> PriorityQueue e a -> PriorityQueue e a
 addAll list pq = foldr (uncurry add) pq list
 
--- |Converts the priority queue to a sorted list in O(n) time
+-- |Converts the priority queue to a sorted list in O(n log n) time
 toList :: (Eq e, Ord a) => PriorityQueue e a -> [e]
 toList pq
     | isEmpty pq = []

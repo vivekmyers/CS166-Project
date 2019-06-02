@@ -30,7 +30,7 @@ poll pq = (first, cleanup . PQ rest $ deleted pq)
     where first = findMin' . added $ pq
           rest = deleteMin' . added $ pq
 
--- |Meld two priority queues in O(1)
+-- |Meld two priority queues in O(1) time
 merge :: (Eq e, Ord a) => PriorityQueue e a -> PriorityQueue e a -> PriorityQueue e a
 merge a b = PQ (meld' (added a) (added b)) (meld' (deleted a) (deleted b))
 
@@ -44,7 +44,7 @@ decrease x p q pq
 addAll :: (Eq e, Ord a) => [(e, a)] -> PriorityQueue e a -> PriorityQueue e a
 addAll list pq = foldr (uncurry add) pq list
 
--- |Converts the priority queue to a sorted list in O(n) time
+-- |Converts the priority queue to a sorted list in O(n log n) time
 toList :: (Eq e, Ord a) => PriorityQueue e a -> [e]
 toList pq
     | isEmpty pq = []
